@@ -32,7 +32,7 @@ func Broadcast[T any](ctx context.Context, in <-chan T, out ...chan T) context.C
 }
 
 // GenerateBroadcasters takes an 'in' channel of T and will generate 'n' number of
-// channels.
+// channels which can be used to broadcast to via the 'in' channel.
 //
 // It returns a slice of type T channels and a CancelFunc.
 func GenerateBroadcasters[T any](ctx context.Context, in <-chan T, n int) ([]chan T, context.CancelFunc) {
