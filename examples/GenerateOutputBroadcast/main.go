@@ -11,26 +11,27 @@ import (
 
 func main() {
 	ctx := context.Background()
+	in := make(chan int)
 	outputChanCount := 3
 	wg := sync.WaitGroup{}
-	in, out, cancel := fofi.GenerateInputOutputBroadcasters[int](ctx, outputChanCount)
+	out, cancel := fofi.GenerateOutputBroadcast(ctx, in, outputChanCount)
 	go func() {
 		i := 0
 		for {
-			in <- i
-			i++
 			if i >= 10 {
 				cancel()
 			}
+			in <- i
+			i++
 			time.Sleep(time.Second)
 		}
 	}()
 
 	for i := 0; i < outputChanCount; i++ {
 		wg.Add(1)
-		go func(out <-chan int) {
+		go func(ch <-chan int) {
 			defer wg.Done()
-			for v := range out {
+			for v := range ch {
 				fmt.Println(v)
 			}
 		}(out[i])

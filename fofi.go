@@ -7,7 +7,7 @@ import (
 
 // Broadcast takes an 'in' channel of T and will broadcast that value
 // to every 'out' channel of T. Base function that's used by higher-order
-// GenerateOutputBroadcasters() and GenerateInputOutputBroadcasters()
+// GenerateOutputBroadcast() and GenerateBroadcast()
 // functions. Ideally you should use those, this is exposed if you want
 // to create the channels yourself.
 //
@@ -37,12 +37,12 @@ func Broadcast[T any](ctx context.Context, in <-chan T, out ...chan T) context.C
 	return cancel
 }
 
-// GenerateOutputBroadcasters takes an 'in' channel of type T and will generate 'n' number of
+// GenerateOutputBroadcast takes an 'in' channel of type T and will generate 'n' number of
 // channels which can be used to broadcast to via the 'in' channel. If the cancel func is invoked
 // all 'out' channels will be closed.
 //
 // It returns a slice 'out' channels of type T and a CancelFunc.
-func GenerateOutputBroadcasters[T any](ctx context.Context, in <-chan T, n int) (out []<-chan T, cancel context.CancelFunc) {
+func GenerateOutputBroadcast[T any](ctx context.Context, in <-chan T, n int) (out []<-chan T, cancel context.CancelFunc) {
 	chs := make([]chan T, n)
 	// Initialize channels of type T
 	for i := 0; i < n; i++ {
@@ -59,15 +59,15 @@ func GenerateOutputBroadcasters[T any](ctx context.Context, in <-chan T, n int) 
 	return
 }
 
-// GenerateInputOutputBroadcasters is designed to be the simplest way to create an input
+// GenerateBroadcast is designed to be the simplest way to create an input
 // channel with a series of 'n' output channels. Useful when you don't want to create
 // channels yourself. Uses Broadcast() as a base, cancelFunc will close channels for you.
 //
 // It returns an 'in' channel of type T and a slice of 'out' channels
 // of type T length equal to the parameter 'n'. Also returns a context.CancelFunc.
-func GenerateInputOutputBroadcasters[T any](ctx context.Context, n int) (in chan<- T, out []<-chan T, cancel context.CancelFunc) {
+func GenerateBroadcast[T any](ctx context.Context, n int) (in chan<- T, out []<-chan T, cancel context.CancelFunc) {
 	tmp := make(chan T)
-	out, cancel = GenerateOutputBroadcasters(ctx, tmp, n)
+	out, cancel = GenerateOutputBroadcast(ctx, tmp, n)
 	in = tmp
 	return
 }

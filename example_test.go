@@ -22,11 +22,11 @@ func ExampleBroadcast() {
 	go func() {
 		i := 0
 		for {
-			in <- i
-			i++
 			if i >= 10 {
 				cancel()
 			}
+			in <- i
+			i++
 			time.Sleep(time.Second)
 		}
 	}()
@@ -46,20 +46,20 @@ func ExampleBroadcast() {
 // This example will create one goroutine which will count up from 0 every second
 // and create output channels equal to 'outputChanCount' and each subscribed
 // goroutine will print the value.
-func ExampleGenerateOutputBroadcasters() {
+func ExampleGenerateOutputBroadcast() {
 	ctx := context.Background()
 	in := make(chan int)
 	outputChanCount := 3
 	wg := sync.WaitGroup{}
-	out, cancel := fofi.GenerateOutputBroadcasters(ctx, in, outputChanCount)
+	out, cancel := fofi.GenerateOutputBroadcast(ctx, in, outputChanCount)
 	go func() {
 		i := 0
 		for {
-			in <- i
-			i++
 			if i >= 10 {
 				cancel()
 			}
+			in <- i
+			i++
 			time.Sleep(time.Second)
 		}
 	}()
@@ -79,19 +79,19 @@ func ExampleGenerateOutputBroadcasters() {
 // This example will create one goroutine which will count up from 0 every second
 // and create output channels equal to 'outputChanCount' and each subscribed
 // goroutine will print the value.
-func ExampleGenerateInputOutputBroadcasters() {
+func ExampleGenerateBroadcast() {
 	ctx := context.Background()
 	outputChanCount := 3
 	wg := sync.WaitGroup{}
-	in, out, cancel := fofi.GenerateInputOutputBroadcasters[int](ctx, outputChanCount)
+	in, out, cancel := fofi.GenerateBroadcast[int](ctx, outputChanCount)
 	go func() {
 		i := 0
 		for {
-			in <- i
-			i++
 			if i >= 10 {
 				cancel()
 			}
+			in <- i
+			i++
 			time.Sleep(time.Second)
 		}
 	}()
