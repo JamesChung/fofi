@@ -26,8 +26,7 @@ func Broadcast[T any](ctx context.Context, in <-chan T, out ...chan T) context.C
 			select {
 			case <-ctx.Done():
 				return
-			default:
-				val := <-in
+			case val := <-in:
 				for _, ch := range out {
 					ch <- val
 				}
@@ -91,12 +90,11 @@ func Coalesce[T any](ctx context.Context, bufferSize int, in ...chan T) (<-chan 
 					select {
 					case <-ctx.Done():
 						return
-					default:
-						if v, ok := <-c; ok {
-							ch <- v
-						} else {
+					case v, ok := <-c:
+						if !ok {
 							return
 						}
+						ch <- v
 					}
 				}
 			}(c)
