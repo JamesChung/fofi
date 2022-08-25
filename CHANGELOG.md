@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2022-08-25
+- Fix: allow blocking writes to output channels and allow recovery from edge case panics.
+
 ## [0.4.0] - 2022-08-24
 ### Changed
 - Minor change to the underlying `select` statement in `Coalesce` and `Broadcast` to make it more idiomatic.
