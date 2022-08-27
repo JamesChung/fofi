@@ -2,7 +2,6 @@ package fofi
 
 import (
 	"context"
-	"log"
 	"sync"
 )
 
@@ -28,21 +27,17 @@ func Broadcast[T any](ctx context.Context, in <-chan T, out ...chan T) context.C
 			case <-ctx.Done():
 				return
 			case val := <-in:
-				for i, ch := range out {
+				for _, ch := range out {
 					// For every output channel we create a goroutine which
 					// will handle writing the 'in' value out to each channel
 					// without blocking parent goroutine.
-					go func(i int, ch chan<- T) {
-						// Given a scenario where this transient goroutine is blocked
-						// long past when someone cancels, make sure to recover from
-						// writing to a closed channel and log output.
-						defer func() {
-							if recover() != nil {
-								log.Printf("fofi: broadcast failed to send value %v on closed channel #%d", val, i)
-							}
-						}()
-						ch <- val
-					}(i, ch)
+					go func(ch chan<- T) {
+						select {
+						case <-ctx.Done():
+							return
+						case ch <- val:
+						}
+					}(ch)
 				}
 			}
 		}
