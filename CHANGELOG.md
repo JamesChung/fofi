@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2022-08-31
+- BREAKING CHANGE: `Coalesce` will change `in` parameter type from `...chan T` to `...<-chan T`
+
 ## [0.4.2] - 2022-08-27
 - Fix: change broadcast to no longer require recovery from edge case panics.
 

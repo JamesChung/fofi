@@ -85,7 +85,7 @@ func GenerateBroadcast[T any](ctx context.Context, n int) (in chan<- T, out []<-
 // one channel to receive on. Will close the channel when CancelFunc is invoked.
 //
 // It returns a receive channel of T and a context.CancelFunc.
-func Coalesce[T any](ctx context.Context, bufferSize int, in ...chan T) (<-chan T, context.CancelFunc) {
+func Coalesce[T any](ctx context.Context, bufferSize int, in ...<-chan T) (<-chan T, context.CancelFunc) {
 	ch := make(chan T, bufferSize)
 	ctx, cancel := context.WithCancel(ctx)
 	go func() {

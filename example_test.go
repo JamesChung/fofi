@@ -113,7 +113,6 @@ func ExampleGenerateBroadcast() {
 func ExampleCoalesce() {
 	ctx := context.Background()
 	ins := []chan string{make(chan string), make(chan string)}
-	ch, cancel := fofi.Coalesce(ctx, 0, ins...)
 	outputChanCount := len(ins)
 	wg := sync.WaitGroup{}
 	for i := 0; i < outputChanCount; i++ {
@@ -123,6 +122,11 @@ func ExampleCoalesce() {
 			}
 		}(i, ins[i])
 	}
+	inputs := make([]<-chan string, outputChanCount)
+	for i, c := range ins {
+		inputs[i] = c
+	}
+	ch, cancel := fofi.Coalesce(ctx, 0, inputs...)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
